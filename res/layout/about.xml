@@ -32,6 +32,15 @@
 		android:layout_height="wrap_content" android:text="android@schoar.de"
 		android:textStyle="bold" android:layout_margin="5px" android:gravity="center_horizontal" />
 
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Modifications and extra's"
+		android:layout_centerHorizontal="true" android:layout_margin="5px" />
+
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="vincent@byte.nl"
+		android:textStyle="bold" android:layout_margin="5px" android:gravity="center_horizontal" />
+
+
 	<Button android:id="@+id/aboutBtnOk" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="OK"
 		android:layout_marginBottom="25px" />
