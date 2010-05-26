@@ -85,6 +85,42 @@ public enum NagiosState {
 
 		return "LOC";
 	}
+	
+	public String toString() {
+		if (SERVICE_CRITICAL.equals(this)) {
+			return "CRITICAL";
+		}
+		if (SERVICE_WARNING.equals(this)) {
+			return "WARNING";
+		}
+		if (SERVICE_UNKNOWN.equals(this)) {
+			return "Unknown";
+		}
+		// if (SERVICE_RECOVERY.equals(this)) {
+		// return "Recovery";
+		// }
+		if (SERVICE_PENDING.equals(this)) {
+			return "Pending";
+		}
+		if (SERVICE_OK.equals(this)) {
+			return "OK";
+		}
+
+		if (HOST_UNREACHABLE.equals(this)) {
+			return "Unreachable";
+		}
+		if (HOST_DOWN.equals(this)) {
+			return "DOWN";
+		}
+		if (HOST_PENDING.equals(this)) {
+			return "Pending";
+		}
+		if (HOST_UP.equals(this)) {
+			return "UP";
+		}
+
+		return "LOCAL ERROR";	
+	}
 
 	// .statusPENDING { #ACACAC; }
 	// .statusOK { #33FF00; }
