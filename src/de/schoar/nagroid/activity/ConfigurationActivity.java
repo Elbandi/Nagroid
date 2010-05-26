@@ -212,6 +212,25 @@ public class ConfigurationActivity extends PreferenceActivity {
 						return false;
 					}
 				});
+		
+		final CheckBoxPreference cbpPollingExtState = (CheckBoxPreference) findPreference(ConfigurationAccess.POLLING_EXTSTATE);
+		boolean cbpPollingExtStateValue = DM.I.getConfiguration()
+				.getPollingExtState();
+		cbpPollingExtState
+				.setChecked(cbpPollingExtStateValue);
+
+		cbpPollingExtState
+				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+					@Override
+					public boolean onPreferenceChange(Preference pref,
+							Object obj) {
+						Boolean bool = (Boolean) obj;
+						DM.I.getConfiguration().setPollingExtState(
+								bool);
+						cbpPollingExtState.setChecked(bool);
+						return false;
+					}
+				});
 
 		// -----
 

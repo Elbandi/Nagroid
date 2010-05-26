@@ -30,6 +30,7 @@ public class ConfigurationAccess {
 
 	public static final String POLLING_INTERVAL = "configuration_polling_interval";
 	public static final String POLLING_ENABLED = "configuration_polling_enabled";
+	public static final String POLLING_EXTSTATE = "configuration_polling_extstate";
 
 	public static final String MISC_AUTOSTART = "configuration_misc_autostart";
 	public static final String MISC_UPDATE = "configuration_misc_update";
@@ -125,6 +126,15 @@ public class ConfigurationAccess {
 
 	public synchronized boolean getPollingEnabled() {
 		return mSharedPreferencesIntern.getBoolean(POLLING_ENABLED, true);
+	}
+	
+	public synchronized boolean getPollingExtState() {
+		return mSharedPreferencesPreference.getBoolean(POLLING_EXTSTATE, false);
+	}
+	
+	public synchronized void setPollingExtState(boolean enable) {
+		mSharedPreferencesPreference.edit()
+				.putBoolean(POLLING_EXTSTATE, enable).commit();
 	}
 
 	public synchronized void setPollingEnabled(boolean enabled, Context ctx) {

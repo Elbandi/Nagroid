@@ -4,11 +4,13 @@ public class NagiosService {
 	private NagiosHost mHost;
 	private String mServiceName;
 	private NagiosState mState;
+	private NagiosExtState mExtState;
 
-	public NagiosService(NagiosHost host, String servicename, NagiosState state) {
+	public NagiosService(NagiosHost host, String servicename, NagiosState state, NagiosExtState extstate) {
 		mHost = host;
 		mServiceName = servicename;
 		mState = state;
+		mExtState = extstate;
 		host.addChild(this);
 	}
 
@@ -31,5 +33,9 @@ public class NagiosService {
 
 	public NagiosState getState() {
 		return mState;
+	}
+	
+	public NagiosExtState getExtState() {
+		return mExtState;
 	}
 }

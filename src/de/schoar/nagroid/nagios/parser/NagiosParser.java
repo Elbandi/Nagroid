@@ -20,6 +20,7 @@ abstract public class NagiosParser {
 	}
 
 	public abstract void updateProblems() throws NagiosParsingFailedException;
+	//public abstract void getExtStatus() throws NagiosParsingFailedException;
 
 	protected Document getDocument(InputStream is)
 			throws NagiosParsingFailedException {

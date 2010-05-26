@@ -81,7 +81,13 @@ public class NagiosSiteAdapater extends BaseAdapter {
 
 		if (o instanceof NagiosService) {
 			NagiosService ns = (NagiosService) o;
-			return createRowState(convertView, ns.getName(), ns.getState()
+			
+			String desc = ns.getName();
+			if (ns.getExtState() != null) {
+				desc += " (" + ns.getExtState().getInfo() + " )";
+			}
+			
+			return createRowState(convertView, desc, ns.getState()
 					.toShort(), ns.getState().toColor(), 15);
 		}
 
@@ -109,7 +115,7 @@ public class NagiosSiteAdapater extends BaseAdapter {
 			tvName.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT, 1));
 
-			tvName.setSingleLine();
+			//tvName.setSingleLine();
 			tvName.setTextColor(Color.BLACK);
 			tvName.setEllipsize(TextUtils.TruncateAt.MARQUEE);
 			ll.addView(tvName);

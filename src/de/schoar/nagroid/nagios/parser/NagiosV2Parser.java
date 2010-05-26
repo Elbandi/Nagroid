@@ -6,9 +6,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.net.Uri;
 import android.util.Log;
 import de.schoar.android.helper.http.HTTPDownloader;
 import de.schoar.android.helper.http.HTTPDownloaderException;
+import de.schoar.nagroid.ConfigurationAccess;
+import de.schoar.nagroid.DM;
+import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
 import de.schoar.nagroid.nagios.NagiosService;
 import de.schoar.nagroid.nagios.NagiosSite;
@@ -16,7 +20,7 @@ import de.schoar.nagroid.nagios.NagiosState;
 
 public class NagiosV2Parser extends NagiosParser {
 	private static final String LOGT = "NagiosV2Parser";
-
+	
 	public NagiosV2Parser(NagiosSite site) {
 		super(site);
 	}
@@ -71,8 +75,52 @@ public class NagiosV2Parser extends NagiosParser {
 			throw new NagiosParsingFailedException(e.getMessage(), e);
 		}
 	}
+	
+	private NagiosExtState getExtState(NagiosHost nagiosHost, String service) throws NagiosParsingFailedException {
+		
+		String url = mNagiosSite.getUrlBase() + "/statuswml.cgi?host=" + Uri.encode(nagiosHost.getName()) + "&service=" + Uri.encode(service);
+		String user = mNagiosSite.getUrlUser();
+		String pass = mNagiosSite.getUrlPass();
+		
+		InputStream is;
 
-	private void parseAnchor(Node nAnchor) {
+		try {
+			is = new HTTPDownloader(url, user, pass).getBodyAsInputStream();
+		} catch (HTTPDownloaderException e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+
+		try {
+			String mInfo = "";
+			String mDuration = "";
+			String mLastCheck = "";
+
+			Document doc = getDocument(is);
+			
+			NodeList nl = doc.getElementsByTagName("td");
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node n = nl.item(i);
+				String value = getNodeValue(n);
+				if("Info:".equals(value)) {
+					mInfo = getNodeValue(nl.item(i+1));
+				}
+				else if ("Duration:".equals(value)) {
+					mDuration = getNodeValue(nl.item(i+1));
+				}
+				else if ("Last Check:".equals(value)) {
+					mLastCheck = getNodeValue(nl.item(i+1));
+				}
+			}
+			
+			NagiosExtState extState = new NagiosExtState(mInfo, mDuration, mLastCheck);
+			return extState;
+			
+		} catch (Exception e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+	}
+
+	private void parseAnchor(Node nAnchor) throws NagiosParsingFailedException {
 		String service = null;
 		String host = null;
 
@@ -138,9 +186,14 @@ public class NagiosV2Parser extends NagiosParser {
 		}
 
 		if (service != null) {
+			NagiosExtState extState = null;
+			if (DM.I.getConfiguration().getPollingExtState()) {
+				extState = getExtState(nh, service);
+			}
+			
 			@SuppressWarnings("unused")
 			NagiosService ns = new NagiosService(nh, service,
-					decodeStateService(state));
+					decodeStateService(state), extState);
 		}
 	}
 

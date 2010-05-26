@@ -24,6 +24,8 @@
 			android:title="Interval" android:dialogTitle="Interval"
 			android:entries="@array/config_polling_interval_entries"
 			android:entryValues="@array/config_polling_interval_values" />
+		<CheckBoxPreference android:key="configuration_polling_extstate"
+			android:title="Extended Service Status" android:summary="Takes more bandwidth and polling is slower" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="Notification">
