@@ -1,0 +1,13 @@
+- display request running
+- If polling fails (eg connectivity problem) there is no fast retry. Next polling will be at the configured interval.
+- only critical
+- whats up/ok ?
+- play sound
+- overwrite silent mode on play sound/vibrate
+- Action on Configuration change
+- Menu En/Disable
+- NotificationHelper
+- Notification Health
+- move polling to pollhandler
+- persistent logging
+- persistent nagios state

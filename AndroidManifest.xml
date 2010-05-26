@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="de.schoar.nagroid" android:versionName="0.0.7"
+	android:versionCode="7">
+
+	<uses-sdk android:minSdkVersion="2"/>
+
+	<application android:icon="@drawable/nagroid_48x48"
+		android:label="@string/app_name">
+
+		<activity android:name=".activity.ProblemsActivity"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".activity.ConfigurationActivity" />
+		<activity android:name=".activity.LogActivity" />
+
+		<receiver android:name=".service.BootCompleteReceiver"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
+
+		<receiver android:name=".service.PollReceiver"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="de.schoar.nagroid.POLL" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
+
+		<service android:name=".service.PollService"></service>
+	</application>
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+
+</manifest> 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="Nagios">
+		<EditTextPreference android:key="configuration_nagios_url"
+			android:singleLine="true" android:title="Url" android:dialogTitle="Url (cgi-bin)"
+			android:dialogMessage="Specify the url pointing to your nagios cgi-bin directory" />
+		<CheckBoxPreference android:key="configuration_nagios_self_signed"
+			android:title="Self Signed Certificate"
+			android:summary="Accept any certificate for HTTPS\nWARNING: MITM attacks possible!" />
+		<CheckBoxPreference android:key="configuration_nagios_http_basic_auth"
+			android:title="Http Basic Auth" android:summary="Nagios is protected with a password" />
+		<EditTextPreference android:key="configuration_nagios_http_basic_auth_username"
+			android:singleLine="true" android:title="Http Basic Auth Username"
+			android:dialogTitle="Username" android:enabled="false" />
+		<EditTextPreference android:key="configuration_nagios_http_basic_auth_password"
+			android:singleLine="true" android:title="Http Basic Auth Password"
+			android:dialogTitle="Password" android:password="true"
+			android:enabled="false" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Polling">
+		<ListPreference android:key="configuration_polling_interval"
+			android:title="Interval" android:dialogTitle="Interval"
+			android:entries="@array/config_polling_interval_entries"
+			android:entryValues="@array/config_polling_interval_values" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Notification">
+		<CheckBoxPreference android:key="configuration_notification_unhandled_only"
+			android:title="Unhandled Only" android:summary="Handle unhandled nagios problems only" />
+		<CheckBoxPreference android:key="configuration_notification_vibrate"
+			android:title="Vibrate" android:summary="Vibrate on service/host problems" />
+		<CheckBoxPreference android:key="configuration_notification_hide_if_ok"
+			android:title="Hide If Ok" android:summary="Hide icon if everything is ok" />
+		<CheckBoxPreference android:key="configuration_notification_alarm_enabled"
+			android:title="Enable Alarms" android:summary="Play sounds on problem" />
+		<RingtonePreference 
+			android:key="configuration_notification_alarm_warning" android:title="Alarm On Warning"
+			android:ringtoneType="all"/>
+		<RingtonePreference 
+			android:key="configuration_notification_alarm_critical" android:title="Alarm On Critical"
+			android:ringtoneType="all"/>
+		<RingtonePreference 
+			android:key="configuration_notification_alarm_down_unreachable" android:title="Alarm On Down/Unr."
+			android:ringtoneType="all"/>
+		
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Misc">
+		<CheckBoxPreference android:key="configuration_misc_autostart"
+			android:title="Autostart" android:summary="Autostart Nagroid after reboot" />
+		<CheckBoxPreference android:key="configuration_misc_update"
+			android:title="Nagroid Updates" android:summary="Check for Nagroid updates" />
+	</PreferenceCategory>
+
+</PreferenceScreen>
