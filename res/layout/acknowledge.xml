@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:orientation="vertical" android:layout_width="fill_parent"
+  	android:layout_height="fill_parent"
+  	android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingBottom="10dp">
+  	
+  	<TextView android:id="@+id/ackProblemDesc"
+  		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text=""
+		android:paddingBottom="10dp"
+		android:textColor="#fff" />
+			 
+  	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Enter comment:"
+		android:layout_margin="5px" />
+	
+	<EditText android:id="@+id/ackComment"
+		android:text=""
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:paddingTop="10dp">
+	
+		<Button android:id="@+id/ackBtnAck" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="Acknowledge" />
+		<Button android:id="@+id/ackBtnCancel" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="Cancel" />
+	</LinearLayout>
+	
+</LinearLayout>
