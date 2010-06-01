@@ -1,7 +1,20 @@
 package de.schoar.nagroid.nagios.parser;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -196,6 +209,51 @@ public class NagiosV2Parser extends NagiosParser {
 					decodeStateService(state), extState);
 		}
 	}
+	
+	public void AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
+		
+		String url = mNagiosSite.getUrlBase() + "/cmd.cgi";
+		String user = mNagiosSite.getUrlUser();
+		String pass = mNagiosSite.getUrlPass();
+		
+		InputStream is;
+		String postData = "";
+
+		postData += "com_author="+Uri.encode(user);
+		postData += "&com_data="+Uri.encode(comment);
+		postData += "&send_notification=1";
+		postData += "&content=wml";
+		postData += "&cmd_typ=34";
+		postData += "&cmd_mod=2";
+		
+		if (problemObj.getClass() == NagiosService.class) {
+			NagiosService service = (NagiosService) problemObj;
+			
+			postData += "&host="+Uri.encode(service.getHost().getName());
+			postData += "&service="+Uri.encode(service.getName());
+		}
+		else if (problemObj.getClass() == NagiosHost.class) {
+			NagiosHost host = (NagiosHost) problemObj;
+			
+			postData += "&host="+Uri.encode(host.getName());
+		}
+		
+		try {
+			HTTPDownloader http = new HTTPDownloader(url, user, pass);
+			http.setPostData(postData);
+			http.getBodyAsInputStream();
+			
+		} catch (HTTPDownloaderException e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+
+		try {
+			
+		} catch (Exception e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+		
+	}
 
 	private NagiosState decodeStateHost(String state) {
 
@@ -247,5 +305,4 @@ public class NagiosV2Parser extends NagiosParser {
 
 		return NagiosState.SERVICE_LOCAL_ERROR;
 	}
-
 }
