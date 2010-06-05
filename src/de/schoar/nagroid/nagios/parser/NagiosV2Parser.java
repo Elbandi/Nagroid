@@ -1,20 +1,7 @@
 package de.schoar.nagroid.nagios.parser;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -23,7 +10,6 @@ import android.net.Uri;
 import android.util.Log;
 import de.schoar.android.helper.http.HTTPDownloader;
 import de.schoar.android.helper.http.HTTPDownloaderException;
-import de.schoar.nagroid.ConfigurationAccess;
 import de.schoar.nagroid.DM;
 import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
@@ -210,7 +196,7 @@ public class NagiosV2Parser extends NagiosParser {
 		}
 	}
 	
-	public void AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
+	public String AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
 		
 		String url = mNagiosSite.getUrlBase() + "/cmd.cgi";
 		String user = mNagiosSite.getUrlUser();
@@ -218,6 +204,11 @@ public class NagiosV2Parser extends NagiosParser {
 		
 		InputStream is;
 		String postData = "";
+		String cmdRes = "Could not execute command...";
+		
+		if (comment.equals("")) {
+			comment = "no comment";
+		}
 
 		postData += "com_author="+Uri.encode(user);
 		postData += "&com_data="+Uri.encode(comment);
@@ -241,7 +232,13 @@ public class NagiosV2Parser extends NagiosParser {
 		try {
 			HTTPDownloader http = new HTTPDownloader(url, user, pass);
 			http.setPostData(postData);
-			http.getBodyAsInputStream();
+			is = http.getBodyAsInputStream();
+			
+			Document doc = getDocument(is);
+			NodeList nl = doc.getElementsByTagName("p");
+			
+			Node n = nl.item(0);
+			cmdRes = getNodeValue(n);
 			
 		} catch (HTTPDownloaderException e) {
 			throw new NagiosParsingFailedException(e.getMessage(), e);
@@ -252,6 +249,8 @@ public class NagiosV2Parser extends NagiosParser {
 		} catch (Exception e) {
 			throw new NagiosParsingFailedException(e.getMessage(), e);
 		}
+		
+		return cmdRes;
 		
 	}
 

@@ -1,26 +1,17 @@
 package de.schoar.nagroid.dialog;
 
-import de.schoar.android.helper.misc.Updater;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import de.schoar.nagroid.DM;
-import de.schoar.nagroid.R;
 import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
 import de.schoar.nagroid.nagios.NagiosService;
 import de.schoar.nagroid.nagios.NagiosState;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class ProblemDialog extends AlertDialog {
 

@@ -1,36 +1,26 @@
 package de.schoar.nagroid.dialog;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.widget.EditText;
 import de.schoar.nagroid.ConfigurationAccess;
 import de.schoar.nagroid.DM;
-import de.schoar.nagroid.R;
 import de.schoar.nagroid.nagios.NagiosHost;
 import de.schoar.nagroid.nagios.NagiosService;
 import de.schoar.nagroid.nagios.NagiosSite;
 import de.schoar.nagroid.nagios.parser.NagiosParsingFailedException;
 import de.schoar.nagroid.nagios.parser.NagiosV2Parser;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 public class AcknowledgeDialog extends AlertDialog {
 	
 	public AcknowledgeDialog(Context context, Object o) {
 		super(context);
-		init(context, o);
+		init(o);
 	}
 
-	private void init(final Context context, final Object problemObj) {
+	private void init(final Object problemObj) {
 		setTitle("Acknowlegde Problem");
 				
 		String problemDesc = "";
@@ -50,17 +40,16 @@ public class AcknowledgeDialog extends AlertDialog {
 		
 		setMessage("Problem: "+problemDesc+"\n\nComment:");
 		
-		final EditText input = new EditText(context);
+		final EditText input = new EditText(this.getContext());
 		setView(input, 20, 0, 20, 20);
 		
 		setCancelable(true);
 		
 		setButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				String value = input.getText().toString();
-			  	ProgressDialog busyDialog = ProgressDialog.show(context, "", "Sending Acknowledge...", true);
-			  	acknowledgeProblem(problemObj, value);
-			  	busyDialog.dismiss();
+				String value = input.getText().toString(); 	
+			  	acknowledgeProblem(problemObj, value);	  	
+			  	DM.I.getPollHandler().poll();
 			  }
 			});
 
@@ -72,11 +61,27 @@ public class AcknowledgeDialog extends AlertDialog {
 	}
 	
 	private void acknowledgeProblem(Object o, String comment) {
+	  	// Not working :(
+		//ProgressDialog busyDialog = ProgressDialog.show(this.getContext(), "", "Sending Acknowledge...", true);
+	  	
 		ConfigurationAccess ca = DM.I.getConfiguration();
 		NagiosSite site = ca.getNagiosSite();
 		try {
-			new NagiosV2Parser(site).AcknowledgeProblem(o, comment);
-			
+			String cmdRes = new NagiosV2Parser(site).AcknowledgeProblem(o, comment);
+		  	
+			//busyDialog.dismiss();
+		  	
+			AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+			builder.setTitle("Acknowledge problem");
+			builder.setMessage(cmdRes);
+			builder.setCancelable(true);
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+					//Nothing :)
+		           }
+			});
+			builder.show();
+					
 		} catch (NagiosParsingFailedException e) {
 			//Log.d("NagiosAcknowledge", "Nagios Acknowledge failed!", e);
 			DM.I.getNagroidLog().addLogWithTime(
