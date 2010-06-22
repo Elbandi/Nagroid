@@ -70,7 +70,7 @@ public class ProblemDialog extends AlertDialog {
 				setButton3("Ack", new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
-
+						new AcknowledgeDialog(lstSite.getContext(), hostProblem).show();
 					}
 				});				
 			}
