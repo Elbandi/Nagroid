@@ -115,7 +115,10 @@ public class NagiosV2Parser extends NagiosParser {
 			return extState;
 			
 		} catch (Exception e) {
-			throw new NagiosParsingFailedException(e.getMessage(), e);
+			//For now, just return something empty...
+			//throw new NagiosParsingFailedException(e.getMessage(), e);
+			
+			return null;
 		}
 	}
 
