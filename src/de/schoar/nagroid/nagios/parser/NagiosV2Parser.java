@@ -217,20 +217,20 @@ public class NagiosV2Parser extends NagiosParser {
 		postData += "&com_data="+Uri.encode(comment);
 		postData += "&send_notification=1";
 		postData += "&content=wml";
-		postData += "&cmd_typ=34";
-		postData += "&cmd_mod=2";
 		
 		if (problemObj.getClass() == NagiosService.class) {
 			NagiosService service = (NagiosService) problemObj;
-			
+			postData += "&cmd_typ=34";
 			postData += "&host="+Uri.encode(service.getHost().getName());
 			postData += "&service="+Uri.encode(service.getName());
 		}
 		else if (problemObj.getClass() == NagiosHost.class) {
 			NagiosHost host = (NagiosHost) problemObj;
-			
+			postData += "&cmd_typ=33";
 			postData += "&host="+Uri.encode(host.getName());
 		}
+		
+		postData += "&cmd_mod=2";
 		
 		try {
 			HTTPDownloader http = new HTTPDownloader(url, user, pass);
