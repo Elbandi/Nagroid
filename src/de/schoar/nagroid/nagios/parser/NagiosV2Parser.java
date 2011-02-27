@@ -1,6 +1,9 @@
 package de.schoar.nagroid.nagios.parser;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -253,6 +256,70 @@ public class NagiosV2Parser extends NagiosParser {
 			throw new NagiosParsingFailedException(e.getMessage(), e);
 		}
 		
+		return cmdRes;
+		
+	}
+	
+	public String DowntimeProblem(Object problemObj, String snoozeTime, String comment) throws NagiosParsingFailedException {
+		
+		String url = mNagiosSite.getUrlBase() + "/cmd.cgi";
+		String user = mNagiosSite.getUrlUser();
+		String pass = mNagiosSite.getUrlPass();
+		
+		InputStream is;
+		String postData = "";
+		String cmdRes = "Could not execute command...";
+		
+		if (comment.equals("")) {
+			comment = "no comment";
+		}
+
+		postData += "com_author="+Uri.encode(user);
+		postData += "&com_data="+Uri.encode(comment);
+		postData += "&content=wml";
+		
+		if (problemObj.getClass() == NagiosService.class) {
+			NagiosService service = (NagiosService) problemObj;
+			postData += "&cmd_typ=56";
+			postData += "&host="+Uri.encode(service.getHost().getName());
+			postData += "&service="+Uri.encode(service.getName());
+		}
+		else if (problemObj.getClass() == NagiosHost.class) {
+			NagiosHost host = (NagiosHost) problemObj;
+			postData += "&cmd_typ=55";
+			postData += "&host="+Uri.encode(host.getName());
+		}
+		
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		
+		postData += "&start_time="+Uri.encode(sdf.format(now).toString());
+		postData += "&end_time="+Uri.encode(snoozeTime);
+		
+		postData += "&fixed=1";
+		postData += "&cmd_mod=2";
+		
+		try {
+			HTTPDownloader http = new HTTPDownloader(url, user, pass);
+			http.setPostData(postData);
+			is = http.getBodyAsInputStream();
+			
+			Document doc = getDocument(is);
+			NodeList nl = doc.getElementsByTagName("p");
+			
+			Node n = nl.item(0);
+			cmdRes = getNodeValue(n);
+			
+		} catch (HTTPDownloaderException e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+
+		try {
+			
+		} catch (Exception e) {
+			throw new NagiosParsingFailedException(e.getMessage(), e);
+		}
+
 		return cmdRes;
 		
 	}

@@ -47,7 +47,13 @@ public class ProblemDialog extends AlertDialog {
 					public void onClick(DialogInterface arg0, int arg1) {
 						new AcknowledgeDialog(lstSite.getContext(), serviceProblem).show();
 					}
-				});				
+				});
+				setButton2("Snooze", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						new SnoozeDialog(lstSite.getContext(), serviceProblem).show();
+					}
+				});	
 			}
 			setButton("View", new OnClickListener() {
 				@Override
@@ -57,7 +63,7 @@ public class ProblemDialog extends AlertDialog {
 							+ "/extinfo.cgi?type=2&host="+serviceProblem.getHost().getName()+"&service="+serviceProblem.getName());
 					context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				}
-			});
+			});			
 		}
 		else if (problem.getClass() == NagiosHost.class) {
 			final NagiosHost hostProblem = (NagiosHost) problem;
@@ -72,7 +78,13 @@ public class ProblemDialog extends AlertDialog {
 					public void onClick(DialogInterface arg0, int arg1) {
 						new AcknowledgeDialog(lstSite.getContext(), hostProblem).show();
 					}
-				});				
+				});
+				setButton2("Actions", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						new SnoozeDialog(lstSite.getContext(), hostProblem).show();
+					}
+				});	
 			}
 			setButton("View", new OnClickListener() {
 				@Override
@@ -82,14 +94,9 @@ public class ProblemDialog extends AlertDialog {
 							+ "/status.cgi?host="+hostProblem.getName());
 					context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				}
-			});
+			});		
 		}
-
-		setButton2("Back", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-			}
-		});
+		
 		setCancelable(true);
 	}
 }

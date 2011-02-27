@@ -1,7 +1,7 @@
 package de.schoar.nagroid.dialog;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+//import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.EditText;
@@ -21,7 +21,7 @@ public class AcknowledgeDialog extends AlertDialog {
 	}
 
 	private void init(final Object problemObj) {
-		setTitle("Acknowlegde Problem");
+		setTitle("Acknowledge Problem");
 				
 		String problemDesc = "";
 		

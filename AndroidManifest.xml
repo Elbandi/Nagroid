@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.schoar.nagroid" android:versionName="0.0.8-byte4" android:versionCode="84">
+	package="de.schoar.nagroid" android:versionName="0.0.9-byte1" android:versionCode="91">
 
 	<uses-sdk android:minSdkVersion="2"/>
 

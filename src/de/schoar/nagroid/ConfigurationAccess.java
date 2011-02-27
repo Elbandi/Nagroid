@@ -34,6 +34,7 @@ public class ConfigurationAccess {
 
 	public static final String MISC_AUTOSTART = "configuration_misc_autostart";
 	public static final String MISC_UPDATE = "configuration_misc_update";
+	public static final String MISC_SNOOZETIME = "configuration_misc_snoozetime";
 
 	private static final String INTERN_LAST_POLL_TIME = "intern_last_poll_time";
 	private static final String INTERN_LAST_POLL_SUCCESSFULL = "intern_last_poll_successfull";
@@ -298,6 +299,15 @@ public class ConfigurationAccess {
 			return new NagiosSite(urlbase, unhandledOnly);
 		}
 		return new NagiosSite(urlbase, user, pass, unhandledOnly);
+	}
+	
+	public synchronized void setSnoozeTime(String snoozeTime) {
+		mSharedPreferencesPreference.edit().putString(
+				MISC_SNOOZETIME, snoozeTime).commit();
+	}
+	public synchronized String getSnoozeTime() {
+		return mSharedPreferencesPreference.getString(
+				MISC_SNOOZETIME, "9:00");
 	}
 
 }
