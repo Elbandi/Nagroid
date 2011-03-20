@@ -52,8 +52,6 @@
 	<PreferenceCategory android:title="Misc">
 		<CheckBoxPreference android:key="configuration_misc_autostart"
 			android:title="Autostart" android:summary="Autostart Nagroid after reboot" />
-		<CheckBoxPreference android:key="configuration_misc_update"
-			android:title="Nagroid Updates" android:summary="Check for Nagroid updates" />
 		<TimePickerPreference android:key="configuration_misc_snoozetime"
 			android:title="Snooze time" android:summary="Snooze until this time in the morning"
 			android:defaultValue="9:00" />

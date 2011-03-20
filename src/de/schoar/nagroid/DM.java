@@ -10,7 +10,6 @@ import de.schoar.android.helper.http.SSLSelfSigned;
 import de.schoar.nagroid.log.NagroidLog;
 import de.schoar.nagroid.nagios.NagiosState;
 import de.schoar.nagroid.notification.HealthNotificationHelper;
-import de.schoar.nagroid.notification.UpdateNotificationHelper;
 import de.schoar.nagroid.polling.PollHandler;
 import de.schoar.nagroid.service.PollReceiver;
 
@@ -45,7 +44,6 @@ public class DM {
 	private ConfigurationAccess mConfigurationAccess;
 
 	private HealthNotificationHelper mHealthNotificationHelper;
-	private UpdateNotificationHelper mUpdateNotificationHelper;
 
 	private PollHandler mPollHandler;
 
@@ -59,7 +57,6 @@ public class DM {
 
 		mHealthNotificationHelper = new HealthNotificationHelper(ctx,
 				mConfigurationAccess);
-		mUpdateNotificationHelper = new UpdateNotificationHelper(ctx);
 
 		mPollHandler = new PollHandler(ctx);
 	}
@@ -94,10 +91,6 @@ public class DM {
 
 	public HealthNotificationHelper getHealthNotificationHelper() {
 		return mHealthNotificationHelper;
-	}
-
-	public UpdateNotificationHelper getUpdateNotificationHelper() {
-		return mUpdateNotificationHelper;
 	}
 
 	public NagroidLog getNagroidLog() {

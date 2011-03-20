@@ -20,14 +20,12 @@ public class PollHandler {
 	private Boolean mPollRunning = false;
 
 	private NagiosPollHandler mNagiosPollHandler;
-	private UpdatePollHandler mUpdatePollHandler;
 
 	public PollHandler(Context ctx) {
 		mContext = ctx;
 		mConnectivityManager = (ConnectivityManager) mContext
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		mNagiosPollHandler = new NagiosPollHandler(ctx);
-		mUpdatePollHandler = new UpdatePollHandler(ctx);
 	}
 
 	public void poll() {
@@ -80,7 +78,6 @@ public class PollHandler {
 		Log.d(LOGT, "Received poll request. Last poll was " + diff + "s ago");
 
 		mNagiosPollHandler.poll();
-		mUpdatePollHandler.poll();
 	}
 
 	private void postPoll() {

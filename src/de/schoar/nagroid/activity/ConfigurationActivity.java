@@ -395,22 +395,6 @@ public class ConfigurationActivity extends PreferenceActivity {
 						return false;
 					}
 				});
-
-		final CheckBoxPreference cbpMiscUpdate = (CheckBoxPreference) findPreference(ConfigurationAccess.MISC_UPDATE);
-		boolean cbpMiscUpdateValue = DM.I.getConfiguration().getMiscUpdate();
-		cbpMiscUpdate.setChecked(cbpMiscUpdateValue);
-
-		cbpMiscUpdate
-				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-					@Override
-					public boolean onPreferenceChange(Preference pref,
-							Object obj) {
-						Boolean bool = (Boolean) obj;
-						DM.I.getConfiguration().setMiscUpdate(bool);
-						cbpMiscUpdate.setChecked(bool);
-						return false;
-					}
-				});
 	}
 
 	private String alarmText(String uristr, String def) {

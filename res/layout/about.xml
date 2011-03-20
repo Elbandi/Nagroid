@@ -43,7 +43,7 @@
 
 	<Button android:id="@+id/aboutBtnOk" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="OK"
-		android:layout_marginBottom="25px" />
+		android:layout_marginBottom="35px" />
 
 </LinearLayout>
 		
