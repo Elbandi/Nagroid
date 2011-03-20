@@ -202,8 +202,26 @@ public class NagiosV2Parser extends NagiosParser {
 		}
 	}
 	
-	public String AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
-		
+	public static final int EnableChecks = 5;
+	public static final int DisableChecks = 6;
+	public static final int ScheduleImmediateCheck = 7;
+	public static final int EnableAllServiceChecks = 15;
+	public static final int DisableAllServiceChecks = 16;
+	public static final int EnableNotifications = 22;
+	public static final int DisableNotifications = 23;
+	public static final int EnableHostNotifications = 24;
+	public static final int DisableHostNotifications = 25;
+	public static final int EnableAllServiceNotifications = 28;
+	public static final int DisableAllServiceNotifications = 29;
+	public static final int AcknowledgeHostProblem = 33;
+	public static final int AcknowledgeServiceProblem = 34;
+	public static final int EnableHostChecks = 47;
+	public static final int DisableHostChecks = 48;
+	public static final int ScheduleHostDowntime = 55;
+	public static final int ScheduleDowntime = 56;
+	
+	
+	public String SendCmd(Object problemObj, int type, String CustomData) throws NagiosParsingFailedException {
 		String url = mNagiosSite.getUrlBase() + "/cmd.cgi";
 		String user = mNagiosSite.getUrlUser();
 		String pass = mNagiosSite.getUrlPass();
@@ -212,28 +230,20 @@ public class NagiosV2Parser extends NagiosParser {
 		String postData = "";
 		String cmdRes = "Could not execute command...";
 		
-		if (comment.equals("")) {
-			comment = "no comment";
-		}
-
-		postData += "com_author="+Uri.encode(user);
-		postData += "&com_data="+Uri.encode(comment);
-		postData += "&send_notification=1";
+		postData += "cmd_typ=" + type;
+		postData += "&cmd_mod=2";
 		postData += "&content=wml";
+		if (CustomData != null && CustomData.length() > 0)
+			postData += "&" + CustomData;
 		
 		if (problemObj.getClass() == NagiosService.class) {
 			NagiosService service = (NagiosService) problemObj;
-			postData += "&cmd_typ=34";
-			postData += "&host="+Uri.encode(service.getHost().getName());
-			postData += "&service="+Uri.encode(service.getName());
-		}
-		else if (problemObj.getClass() == NagiosHost.class) {
+			postData += "&host=" + Uri.encode(service.getHost().getName());
+			postData += "&service=" + Uri.encode(service.getName());
+		} else if (problemObj.getClass() == NagiosHost.class) {
 			NagiosHost host = (NagiosHost) problemObj;
-			postData += "&cmd_typ=33";
-			postData += "&host="+Uri.encode(host.getName());
+			postData += "&host=" + Uri.encode(host.getName());
 		}
-		
-		postData += "&cmd_mod=2";
 		
 		try {
 			HTTPDownloader http = new HTTPDownloader(url, user, pass);
@@ -260,78 +270,68 @@ public class NagiosV2Parser extends NagiosParser {
 		
 	}
 	
-	public String DowntimeProblem(Object problemObj, String snoozeTime, String comment) throws NagiosParsingFailedException {
+	public String ScheduleImmediateCheck(Object problemObj) throws NagiosParsingFailedException {
+		Date now = new Date();
+		// TODO: configurable data format!!!
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return SendCmd(problemObj, ScheduleImmediateCheck, "start_time=" + Uri.encode(sdf.format(now).toString()));
+	}
+	
+	public String AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
 		
-		String url = mNagiosSite.getUrlBase() + "/cmd.cgi";
-		String user = mNagiosSite.getUrlUser();
-		String pass = mNagiosSite.getUrlPass();
-		
-		InputStream is;
-		String postData = "";
-		String cmdRes = "Could not execute command...";
+		String CustomData = "";
 		
 		if (comment.equals("")) {
 			comment = "no comment";
 		}
-
-		postData += "com_author="+Uri.encode(user);
-		postData += "&com_data="+Uri.encode(comment);
-		postData += "&content=wml";
+		
+		CustomData += "com_author=" + Uri.encode(mNagiosSite.getUrlUser());
+		CustomData += "&com_data=" + Uri.encode(comment);
+		CustomData += "&send_notification=1";
 		
 		if (problemObj.getClass() == NagiosService.class) {
-			NagiosService service = (NagiosService) problemObj;
-			postData += "&cmd_typ=56";
-			postData += "&host="+Uri.encode(service.getHost().getName());
-			postData += "&service="+Uri.encode(service.getName());
+			return SendCmd(problemObj, AcknowledgeServiceProblem, CustomData);
+		} else if (problemObj.getClass() == NagiosHost.class) {
+			return SendCmd(problemObj, AcknowledgeHostProblem, CustomData);
+		} else
+			return "Could not execute command...";
+	}
+	
+	public String DowntimeProblem(Object problemObj, String snoozeTime, String comment) throws NagiosParsingFailedException {
+		
+		String CustomData = "";
+		
+		if (comment.equals("")) {
+			comment = "no comment";
 		}
-		else if (problemObj.getClass() == NagiosHost.class) {
-			NagiosHost host = (NagiosHost) problemObj;
-			postData += "&cmd_typ=55";
-			postData += "&host="+Uri.encode(host.getName());
-		}
+		
+		CustomData += "com_author=" + Uri.encode(mNagiosSite.getUrlUser());
+		CustomData += "&com_data=" + Uri.encode(comment);
 		
 		Date now = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		
-		postData += "&start_time="+Uri.encode(sdf.format(now).toString());
-		postData += "&end_time="+Uri.encode(snoozeTime);
+		CustomData += "&start_time=" + Uri.encode(sdf.format(now).toString());
+		CustomData += "&end_time=" + Uri.encode(snoozeTime);
 		
-		postData += "&fixed=1";
-		postData += "&cmd_mod=2";
-		
-		try {
-			HTTPDownloader http = new HTTPDownloader(url, user, pass);
-			http.setPostData(postData);
-			is = http.getBodyAsInputStream();
-			
-			Document doc = getDocument(is);
-			NodeList nl = doc.getElementsByTagName("p");
-			
-			Node n = nl.item(0);
-			cmdRes = getNodeValue(n);
-			
-		} catch (HTTPDownloaderException e) {
-			throw new NagiosParsingFailedException(e.getMessage(), e);
-		}
+		CustomData += "&fixed=1";
 
-		try {
-			
-		} catch (Exception e) {
-			throw new NagiosParsingFailedException(e.getMessage(), e);
-		}
-
-		return cmdRes;
-		
+		if (problemObj.getClass() == NagiosService.class) {
+			return SendCmd(problemObj, ScheduleDowntime, CustomData);
+		} else if (problemObj.getClass() == NagiosHost.class) {
+			return SendCmd(problemObj, ScheduleHostDowntime, CustomData);
+		} else
+			return "Could not execute command...";
 	}
-
+	
 	private NagiosState decodeStateHost(String state) {
-
+		
 		if (state == null) {
 			return NagiosState.HOST_LOCAL_ERROR;
 		}
-
+		
 		String s = state.trim().toUpperCase();
-
+		
 		if ("UP".equals(s)) {
 			return NagiosState.HOST_UP;
 		}
