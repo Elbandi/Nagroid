@@ -1,6 +1,5 @@
 package de.schoar.nagroid.dialog;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,7 +19,6 @@ public class SnoozeDialog extends AlertDialog {
 	
 	private ConfigurationAccess ca = DM.I.getConfiguration();
 	private String snoozeTime = ca.getSnoozeTime();
-	private String snoozeTimeDate = "";
 	
 	public SnoozeDialog(Context context, Object o) {
 		super(context);
@@ -46,19 +44,15 @@ public class SnoozeDialog extends AlertDialog {
 		}
 		
 		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		
-		snoozeTimeDate = sdf.format(now).toString();
+		Calendar nowcal = Calendar.getInstance();
 		
 		// Calculate if snooze time is today or tomorrow
 		if (now.getHours() < Integer.valueOf(snoozeTime.split(":")[0])) {
 			// Today
-			snoozeTimeDate = now.getDay()+"-"+now.getMonth()+"-"+now.getYear()+" "+snoozeTime+":00";
+			snoozeTime = nowcal.get(Calendar.DATE)+"-"+(nowcal.get(Calendar.MONTH) + 1)+"-"+nowcal.get(Calendar.YEAR)+" "+snoozeTime+":00";
 		} else {
 			// Tomorrow
-			Calendar nowcal = Calendar.getInstance();
-			nowcal.add(Calendar.DATE, 1);
-			
+			nowcal.add(Calendar.DATE, 1);			
 			snoozeTime = nowcal.get(Calendar.DATE)+"-"+(nowcal.get(Calendar.MONTH) + 1)+"-"+nowcal.get(Calendar.YEAR)+" "+snoozeTime+":00";
 		}
 		
