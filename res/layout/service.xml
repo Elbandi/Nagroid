@@ -10,4 +10,5 @@
     <Button android:id="@+id/serviceBtnDisableCheck" android:text="Disable Checks" android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
     <Button android:id="@+id/serviceBtnSchedCheck" android:text="Schedule Immediate Check" android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
     <Button android:id="@+id/serviceBtnDisableNotify" android:text="Disable Notifications" android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
+    <Button android:layout_width="fill_parent" android:text="Snooze Problem" android:layout_height="wrap_content" android:id="@+id/serviceBtnSnooze"></Button>
 </LinearLayout>

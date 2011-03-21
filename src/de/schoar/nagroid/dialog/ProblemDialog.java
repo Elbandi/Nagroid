@@ -95,6 +95,13 @@ public class ProblemDialog extends Dialog {
 					DM.I.getPollHandler().poll();
 				}
 			});
+			btn = (Button) findViewById(R.id.serviceBtnSnooze);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					new SnoozeDialog(lstSite.getContext(), serviceProblem).show();
+				}
+			});
 		} else if (problem.getClass() == NagiosHost.class) {
 			final NagiosHost hostProblem = (NagiosHost) problem;
 			setContentView(R.layout.host);
@@ -166,7 +173,13 @@ public class ProblemDialog extends Dialog {
 					});
 				}
 			});
-			
+			btn = (Button) findViewById(R.id.hostBtnSnooze);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					new SnoozeDialog(lstSite.getContext(), hostProblem).show();
+				}
+			});
 		}
 		setCancelable(true);
 	}
