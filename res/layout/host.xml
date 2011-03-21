@@ -5,6 +5,7 @@
   android:layout_height="fill_parent" android:orientation="vertical">
     <TextView android:layout_width="fill_parent" android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/hostTvHost"></TextView>
     <TextView android:layout_width="fill_parent" android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/hostTvInfo"></TextView>
+    <Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/hostBtnAckProblem" android:text="Acknowledge Problem"></Button>
     <Button android:layout_width="fill_parent" android:id="@+id/hostBtnDisableCheck" android:layout_height="wrap_content" android:text="Disable Host Checks"></Button>
     <Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/hostBtnDisableNotify" android:text="Disable Host Notifications"></Button>
     <Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/hostBtnEnableServiceCheck" android:text="Enable All Service Checks"></Button>

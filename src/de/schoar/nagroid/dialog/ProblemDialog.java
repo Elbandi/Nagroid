@@ -105,7 +105,14 @@ public class ProblemDialog extends Dialog {
 			tv = (TextView) findViewById(R.id.hostTvInfo);
 			tv.setText("Service Problems: " + hostProblem.getServices().size());
 
-			Button btn = (Button) findViewById(R.id.hostBtnDisableServiceCheck);
+			Button btn = (Button) findViewById(R.id.hostBtnAckProblem);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					new AcknowledgeDialog(lstSite.getContext(), hostProblem).show();
+				}
+			});
+			btn = (Button) findViewById(R.id.hostBtnDisableServiceCheck);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
