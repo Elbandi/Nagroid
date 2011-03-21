@@ -96,6 +96,10 @@ public class NagiosV2Parser extends NagiosParser {
 			String mInfo = "";
 			String mDuration = "";
 			String mLastCheck = "";
+			boolean mChecksDisabled = false;
+			boolean mNotificationsDisabled = false;
+			boolean mProblemAcknowledged = false;
+			boolean mInScheduledDowntime = false;
 
 			Document doc = getDocument(is);
 			
@@ -104,17 +108,31 @@ public class NagiosV2Parser extends NagiosParser {
 				Node n = nl.item(i);
 				String value = getNodeValue(n);
 				if("Info:".equals(value)) {
-					mInfo = getNodeValue(nl.item(i+1));
+					mInfo = getNodeValue(nl.item(++i));
 				}
 				else if ("Duration:".equals(value)) {
-					mDuration = getNodeValue(nl.item(i+1));
+					mDuration = getNodeValue(nl.item(++i));
 				}
 				else if ("Last Check:".equals(value)) {
-					mLastCheck = getNodeValue(nl.item(i+1));
+					mLastCheck = getNodeValue(nl.item(++i));
+				} else if ("Properties:".equals(value)) {
+					String d = getNodeValue(nl.item(++i));
+					if (d == null) continue;
+					for (String s : d.split(", ")) {
+						if ("Checks disabled".equals(s)) {
+							mChecksDisabled = true;
+						} else if ("Notifications disabled".equals(s)) {
+							mNotificationsDisabled = true;
+						} else if ("Problem acknowledged".equals(s)) {
+							mProblemAcknowledged = true;
+						} else if ("In scheduled downtime".equals(s)) {
+							mInScheduledDowntime = true;
+						}
+					}
 				}
 			}
 			
-			NagiosExtState extState = new NagiosExtState(mInfo, mDuration, mLastCheck);
+			NagiosExtState extState = new NagiosExtState(mInfo, mDuration, mLastCheck, mChecksDisabled, mNotificationsDisabled, mProblemAcknowledged, mInScheduledDowntime);
 			return extState;
 			
 		} catch (Exception e) {
