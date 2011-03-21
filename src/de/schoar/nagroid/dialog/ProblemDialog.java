@@ -52,7 +52,7 @@ public class ProblemDialog extends Dialog {
 				tv.setText("Info: " + serviceExtState.getInfo());
 				tv.setVisibility(View.VISIBLE);
 			} else
-				tv.setVisibility(View.INVISIBLE);
+				tv.setVisibility(View.GONE);
 			
 			Button btn = (Button) findViewById(R.id.serviceBtnAckProblem);
 			btn.setOnClickListener(new View.OnClickListener() {
