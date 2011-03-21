@@ -6,6 +6,13 @@
     <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5px" android:id="@+id/serviceTvHost"></TextView>
     <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5px" android:id="@+id/serviceTvService"></TextView>
     <TextView android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/serviceTvInfo" android:layout_width="fill_parent"></TextView>
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/serviceLlProperties">
+        <TextView android:id="@+id/serviceTvProperties" android:layout_width="wrap_content" android:text="Properties:" android:layout_height="wrap_content" android:layout_marginRight="10px"></TextView>
+        <ImageView android:id="@+id/serviceIvChecksDisabled" android:layout_width="wrap_content" android:src="@drawable/passiveonly" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
+        <ImageView android:id="@+id/serviceIvAcknowledged" android:layout_width="wrap_content" android:src="@drawable/ack" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
+        <ImageView android:id="@+id/serviceIvNotifications" android:layout_width="wrap_content" android:src="@drawable/ndisabled" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
+        <ImageView android:id="@+id/serviceIvInScheduledDowntime" android:layout_width="wrap_content" android:src="@drawable/downtime" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
+    </LinearLayout>
     <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/serviceScrollView">
         <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
             <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnSchedCheck" android:text="Schedule Immediate Check" android:layout_height="wrap_content"></Button>

@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.schoar.nagroid.ConfigurationAccess;
@@ -48,11 +50,25 @@ public class ProblemDialog extends Dialog {
 			tv.setText("Service: " + serviceProblem.getName());
 			
 			tv = (TextView) findViewById(R.id.serviceTvInfo);
+			LinearLayout ll = (LinearLayout) findViewById(R.id.serviceLlProperties);
 			if (serviceExtState != null) {
+				ImageView iv;
 				tv.setText("Info: " + serviceExtState.getInfo());
 				tv.setVisibility(View.VISIBLE);
-			} else
+				iv = (ImageView) findViewById(R.id.serviceIvChecksDisabled);
+				iv.setVisibility(serviceExtState.isChecksDisabled() ? View.VISIBLE : View.GONE);
+				iv = (ImageView) findViewById(R.id.serviceIvNotifications);
+				iv.setVisibility(serviceExtState.isNotificationsDisabled() ? View.VISIBLE : View.GONE);
+				iv = (ImageView) findViewById(R.id.serviceIvAcknowledged);
+				iv.setVisibility(serviceExtState.isProblemAcknowledged() ? View.VISIBLE : View.GONE);
+				iv = (ImageView) findViewById(R.id.serviceIvInScheduledDowntime);
+				iv.setVisibility(serviceExtState.isInScheduledDowntime() ? View.VISIBLE : View.GONE);
+				ll.setVisibility(serviceExtState.isChecksDisabled() || serviceExtState.isNotificationsDisabled() || serviceExtState.isProblemAcknowledged() || serviceExtState.isInScheduledDowntime() ? View.VISIBLE : View.GONE);
+			} else {
 				tv.setVisibility(View.GONE);
+				ll.setVisibility(View.GONE);
+			}
+			
 			
 			Button btn = (Button) findViewById(R.id.serviceBtnAckProblem);
 			btn.setOnClickListener(new View.OnClickListener() {
