@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -37,6 +38,9 @@ public class NagiosV2Parser extends NagiosParser {
 		String pass = mNagiosSite.getUrlPass();
 
 		InputStream is;
+
+		if (DM.I.getConfiguration().getPollingExtState())
+			url += "&extended_status=1";
 
 		try {
 			is = new HTTPDownloader(url, user, pass).getBodyAsInputStream();
@@ -146,6 +150,13 @@ public class NagiosV2Parser extends NagiosParser {
 	private void parseAnchor(Node nAnchor) throws NagiosParsingFailedException {
 		String service = null;
 		String host = null;
+		String mInfo = "";
+		String mDuration = "";
+		String mLastCheck = "";
+		boolean mChecksDisabled = false;
+		boolean mNotificationsDisabled = false;
+		boolean mProblemAcknowledged = false;
+		boolean mInScheduledDowntime = false;
 
 		String state = getNodeValue(nAnchor);
 		if (state == null) {
@@ -168,7 +179,8 @@ public class NagiosV2Parser extends NagiosParser {
 			}
 			for (int c2 = 0; c2 < nlC2.getLength(); c2++) {
 				Node nC2 = nlC2.item(c2);
-				if ("postfield".equals(nC2.getNodeName())) {
+				String nodename = nC2.getNodeName();
+				if ("postfield".equals(nodename)) {
 					String name = NagiosParser.getNodeAttribute(nC2, "name");
 					String value = NagiosParser.getNodeAttribute(nC2, "value");
 					if (name == null || value == null) {
@@ -179,6 +191,31 @@ public class NagiosV2Parser extends NagiosParser {
 					}
 					if ("service".equals(name)) {
 						service = value;
+					}
+				} else if ("setvar".equals(nodename)){
+					Element e = (Element) nC2;
+					String name = e.getAttribute("name");
+					if ("info".equals(name)) {
+						mInfo = e.getAttribute("value");
+					} else if ("duration".equals(name)) {
+						mDuration = e.getAttribute("value");
+					} else if ("lastcheck".equals(name)) {
+						mLastCheck = e.getAttribute("value");
+					} else if ("properties".equals(name)) {
+						String d = e.getAttribute("value");
+						if (d == null)
+							continue;
+						for (String s : d.split(", ")) {
+							if ("Checks disabled".equals(s)) {
+								mChecksDisabled = true;
+							} else if ("Notifications disabled".equals(s)) {
+								mNotificationsDisabled = true;
+							} else if ("Problem acknowledged".equals(s)) {
+								mProblemAcknowledged = true;
+							} else if ("In scheduled downtime".equals(s)) {
+								mInScheduledDowntime = true;
+							}
+						}
 					}
 				}
 			}
@@ -211,7 +248,7 @@ public class NagiosV2Parser extends NagiosParser {
 		if (service != null) {
 			NagiosExtState extState = null;
 			if (DM.I.getConfiguration().getPollingExtState()) {
-				extState = getExtState(nh, service);
+				extState = new NagiosExtState(mInfo, mDuration, mLastCheck, mChecksDisabled, mNotificationsDisabled, mProblemAcknowledged, mInScheduledDowntime);
 			}
 			
 			@SuppressWarnings("unused")
