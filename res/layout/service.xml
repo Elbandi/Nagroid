@@ -6,20 +6,13 @@
     <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5px" android:id="@+id/serviceTvHost"></TextView>
     <TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_margin="5px" android:id="@+id/serviceTvService"></TextView>
     <TextView android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/serviceTvInfo" android:layout_width="fill_parent"></TextView>
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/serviceLlProperties">
-        <TextView android:id="@+id/serviceTvProperties" android:layout_width="wrap_content" android:text="Properties:" android:layout_height="wrap_content" android:layout_marginRight="10px"></TextView>
-        <ImageView android:id="@+id/serviceIvChecksDisabled" android:layout_width="wrap_content" android:src="@drawable/passiveonly" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
-        <ImageView android:id="@+id/serviceIvAcknowledged" android:layout_width="wrap_content" android:src="@drawable/ack" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
-        <ImageView android:id="@+id/serviceIvNotifications" android:layout_width="wrap_content" android:src="@drawable/ndisabled" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
-        <ImageView android:id="@+id/serviceIvInScheduledDowntime" android:layout_width="wrap_content" android:src="@drawable/downtime" android:layout_marginLeft="5px" android:layout_height="wrap_content" android:layout_marginRight="5px"></ImageView>
+    <Button android:layout_height="wrap_content" android:layout_marginTop="10px" android:id="@+id/serviceBtnSchedCheck" android:layout_width="wrap_content" android:layout_gravity="center" android:drawableLeft="@drawable/restart2" android:text="Schedule Immediate Check" android:width="240px"></Button>
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_gravity="center" android:layout_width="wrap_content">
+        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnAckProblem" android:layout_width="wrap_content" android:minWidth="120px" android:text="Acknowledge" android:width="120px" android:drawableTop="@drawable/ack2"></Button>
+        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnChecks" android:layout_width="wrap_content" android:minWidth="120px" android:text="Checks" android:width="120px" android:drawableTop="@drawable/enabled"></Button>
     </LinearLayout>
-    <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/serviceScrollView">
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-            <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnSchedCheck" android:text="Schedule Immediate Check" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnAckProblem" android:text="Acknowledge Problem" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnSnooze" android:text="Snooze Problem" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnDisableCheck" android:text="Disable Checks" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/serviceBtnDisableNotify" android:text="Disable Notifications" android:layout_height="wrap_content"></Button>
-        </LinearLayout>
-    </ScrollView>
+    <LinearLayout android:id="@+id/linearLayout2" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_gravity="center">
+        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnNotifications" android:layout_width="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:drawableTop="@drawable/notify2"></Button>
+        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnScheduleDowntime" android:layout_width="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:drawableTop="@drawable/downtime2"></Button>
+    </LinearLayout>
 </LinearLayout>

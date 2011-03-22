@@ -235,6 +235,8 @@ public class NagiosV2Parser extends NagiosParser {
 	public static final int AcknowledgeServiceProblem = 34;
 	public static final int EnableHostChecks = 47;
 	public static final int DisableHostChecks = 48;
+	public static final int RemoveAcknowledgeHostProblem = 51;
+	public static final int RemoveAcknowledgeServiceProblem = 52;
 	public static final int ScheduleHostDowntime = 55;
 	public static final int ScheduleDowntime = 56;
 	

@@ -30,12 +30,24 @@ public class NagiosExtState {
 		return mLastCheck;
 	}
 
+	public void setNotificationsDisabled(boolean NotificationsDisabled) {
+		this.mNotificationsDisabled = NotificationsDisabled;
+	}
+
 	public boolean isNotificationsDisabled() {
 		return mNotificationsDisabled;
 	}
 
+	public void setProblemAcknowledged(boolean ProblemAcknowledged) {
+		this.mProblemAcknowledged = ProblemAcknowledged;
+	}
+
 	public boolean isProblemAcknowledged() {
 		return mProblemAcknowledged;
+	}
+
+	public void setChecksDisabled(boolean ChecksDisabled) {
+		this.mChecksDisabled = ChecksDisabled;
 	}
 
 	public boolean isChecksDisabled() {

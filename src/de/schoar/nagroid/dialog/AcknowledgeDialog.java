@@ -1,12 +1,14 @@
 package de.schoar.nagroid.dialog;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 //import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.EditText;
 import de.schoar.nagroid.ConfigurationAccess;
 import de.schoar.nagroid.DM;
+import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
 import de.schoar.nagroid.nagios.NagiosService;
 import de.schoar.nagroid.nagios.NagiosSite;
@@ -15,18 +17,21 @@ import de.schoar.nagroid.nagios.parser.NagiosV2Parser;
 
 public class AcknowledgeDialog extends AlertDialog {
 	
-	public AcknowledgeDialog(Context context, Object o) {
+	public AcknowledgeDialog(Context context, Object o, DialogInterface parent) {
 		super(context);
-		init(o);
+		init(o, parent);
 	}
 
-	private void init(final Object problemObj) {
+	private void init(final Object problemObj, final DialogInterface parent) {
+		final NagiosService service;
+		final NagiosHost host;
 		setTitle("Acknowledge Problem");
 				
 		String problemDesc = "";
 		
 		if (problemObj.getClass() == NagiosService.class) {
-			NagiosService service = (NagiosService) problemObj;
+			service = (NagiosService) problemObj;
+			host = null;
 			problemDesc = service.getHost().getName() + "/" + service.getName();
 
 			if (service.getExtState() != null) {
@@ -34,8 +39,12 @@ public class AcknowledgeDialog extends AlertDialog {
 			}
 		}
 		else if (problemObj.getClass() == NagiosHost.class) {
-			NagiosHost host = (NagiosHost) problemObj;
+			host = (NagiosHost) problemObj;
+			service = null;
 			problemDesc = host.getName();
+		} else {
+			host = null;
+			service = null;
 		}
 		
 		setMessage("Problem: "+problemDesc+"\n\nComment:");
@@ -47,12 +56,18 @@ public class AcknowledgeDialog extends AlertDialog {
 		
 		setButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				String value = input.getText().toString(); 	
-			  	acknowledgeProblem(problemObj, value);	  	
-			  	DM.I.getPollHandler().poll();
-			  }
-			});
-
+				String value = input.getText().toString();
+				acknowledgeProblem(problemObj, value);
+				/* nagios has delay, so we have to change this */
+				//DM.I.getPollHandler().poll();
+				if (service != null) {
+					NagiosExtState serviceExtState = service.getExtState();
+					if (serviceExtState != null)
+						serviceExtState.setProblemAcknowledged(true);
+				}
+				parent.cancel();
+			}
+		});
 		setButton2("Cancel", new DialogInterface.OnClickListener() {
 			  public void onClick(DialogInterface dialog, int whichButton) {
 			    // Canceled.
