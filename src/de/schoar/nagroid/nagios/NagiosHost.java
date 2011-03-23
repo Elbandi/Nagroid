@@ -8,6 +8,7 @@ public class NagiosHost {
 	private NagiosSite mSite;
 	private String mName;
 	private NagiosState mState;
+	private NagiosExtState mExtState;
 	private List<NagiosService> mServices = new LinkedList<NagiosService>();
 
 	public NagiosHost(NagiosSite site, String hostname, NagiosState state) {
@@ -41,6 +42,14 @@ public class NagiosHost {
 
 	public void setState(NagiosState ns) {
 		mState = ns;
+	}
+
+	public NagiosExtState getExtState() {
+		return mExtState;
+	}
+
+	public void setExtState(NagiosExtState ns) {
+		mExtState = ns;
 	}
 
 	public List<NagiosService> getServices() {

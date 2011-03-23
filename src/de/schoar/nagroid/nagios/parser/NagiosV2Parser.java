@@ -80,7 +80,8 @@ public class NagiosV2Parser extends NagiosParser {
 	
 	private NagiosExtState getExtState(NagiosHost nagiosHost, String service) throws NagiosParsingFailedException {
 		
-		String url = mNagiosSite.getUrlBase() + "/statuswml.cgi?host=" + Uri.encode(nagiosHost.getName()) + "&service=" + Uri.encode(service);
+		String url = mNagiosSite.getUrlBase() + "/statuswml.cgi?host=" + Uri.encode(nagiosHost.getName());
+		if (service != null ) url += "&service=" + Uri.encode(service);
 		String user = mNagiosSite.getUrlUser();
 		String pass = mNagiosSite.getUrlPass();
 		
@@ -206,6 +207,11 @@ public class NagiosV2Parser extends NagiosParser {
 		}
 		if (service == null) {
 			nh.setState(decodeStateHost(state));
+			NagiosExtState extState = null;
+			if (DM.I.getConfiguration().getPollingExtState()) {
+				extState = getExtState(nh, null);
+			}
+			nh.setExtState(extState);
 		}
 
 		if (service != null) {
