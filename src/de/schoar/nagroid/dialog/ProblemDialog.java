@@ -152,7 +152,7 @@ public class ProblemDialog extends Dialog {
 			});
 			btn = (Button) findViewById(R.id.serviceBtnScheduleDowntime);
 			btn.setWidth(100);
-			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime2 : R.drawable.downtime);
+			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime_blue : R.drawable.downtime_red);
 			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -312,7 +312,7 @@ public class ProblemDialog extends Dialog {
 
 			btn = (Button) findViewById(R.id.hostBtnScheduleDowntime);
 			btn.setWidth(100);
-			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime2 : R.drawable.downtime);
+			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime_blue : R.drawable.downtime_red);
 			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override

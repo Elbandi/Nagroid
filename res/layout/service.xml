@@ -13,6 +13,6 @@
     </LinearLayout>
     <LinearLayout android:id="@+id/linearLayout2" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_gravity="center">
         <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnNotifications" android:layout_width="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:drawableTop="@drawable/notify2"></Button>
-        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnScheduleDowntime" android:layout_width="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:drawableTop="@drawable/downtime2"></Button>
+        <Button android:layout_height="wrap_content" android:id="@+id/serviceBtnScheduleDowntime" android:layout_width="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:drawableTop="@drawable/downtime_red"></Button>
     </LinearLayout>
 </LinearLayout>

@@ -14,7 +14,7 @@
             </LinearLayout>
             <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:id="@+id/linearLayout2" android:layout_gravity="center" android:layout_height="wrap_content">
                 <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:id="@+id/hostBtnNotifications" android:drawableTop="@drawable/notify2"></Button>
-                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:id="@+id/hostBtnScheduleDowntime" android:drawableTop="@drawable/downtime2"></Button>
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:id="@+id/hostBtnScheduleDowntime" android:drawableTop="@drawable/downtime_red"></Button>
             </LinearLayout>
             <TextView android:layout_width="fill_parent" android:layout_gravity="center" android:layout_height="wrap_content" android:gravity="center" android:text="All Services" android:id="@+id/textView1"></TextView>
             <Button android:layout_width="wrap_content" android:layout_gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/restart2" android:layout_marginTop="10px" android:text="Schedule Immediate Check" android:width="240px" android:id="@+id/hostBtnSchedServiceCheck"></Button>
