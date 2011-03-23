@@ -55,6 +55,7 @@
 		<TimePickerPreference android:key="configuration_misc_snoozetime"
 			android:title="Snooze time" android:summary="Snooze until this time in the morning"
 			android:defaultValue="9:00" />
+		<ListPreference android:key="configuration_misc_dateformat" android:title="Date format" android:entries="@array/config_date_format_entries" android:entryValues="@array/config_date_format_values" android:dialogTitle="Date format"></ListPreference>
 	</PreferenceCategory>
 
 </PreferenceScreen>

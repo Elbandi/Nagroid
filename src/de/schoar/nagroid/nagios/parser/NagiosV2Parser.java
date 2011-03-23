@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.util.Log;
 import de.schoar.android.helper.http.HTTPDownloader;
 import de.schoar.android.helper.http.HTTPDownloaderException;
+import de.schoar.android.helper.misc.DateFormat;
 import de.schoar.nagroid.DM;
 import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
@@ -300,8 +301,7 @@ public class NagiosV2Parser extends NagiosParser {
 	
 	public String ScheduleImmediateCheck(Object problemObj, int type) throws NagiosParsingFailedException {
 		Date now = new Date();
-		// TODO: configurable data format!!!
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DateFormat.toDateFormat(DM.I.getConfiguration().getMiscDateFormat()));
 		return SendCmd(problemObj, type, "start_time=" + Uri.encode(sdf.format(now).toString()));
 	}
 	
@@ -337,7 +337,7 @@ public class NagiosV2Parser extends NagiosParser {
 		CustomData += "&com_data=" + Uri.encode(comment);
 		
 		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DateFormat.toDateFormat(DM.I.getConfiguration().getMiscDateFormat()));
 		
 		CustomData += "&start_time=" + Uri.encode(sdf.format(now).toString());
 		CustomData += "&end_time=" + Uri.encode(snoozeTime);

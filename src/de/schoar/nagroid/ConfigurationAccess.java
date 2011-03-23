@@ -33,6 +33,7 @@ public class ConfigurationAccess {
 	public static final String POLLING_EXTSTATE = "configuration_polling_extstate";
 
 	public static final String MISC_AUTOSTART = "configuration_misc_autostart";
+	public static final String MISC_DATEFORMAT = "configuration_misc_dateformat";
 	public static final String MISC_SNOOZETIME = "configuration_misc_snoozetime";
 
 	private static final String INTERN_LAST_POLL_TIME = "intern_last_poll_time";
@@ -220,6 +221,15 @@ public class ConfigurationAccess {
 	public synchronized void setNotificationAlarmDownUnreachable(String uri) {
 		mSharedPreferencesPreference.edit().putString(
 				NOTIFICATION_ALARM_DOWN_UNREACHABLE, uri).commit();
+	}
+
+	public synchronized int getMiscDateFormat() {
+		return mSharedPreferencesPreference.getInt(MISC_DATEFORMAT, 1);
+	}
+
+	public synchronized void setMiscDateFormat(int type, Context ctx) {
+		mSharedPreferencesPreference.edit().putInt(MISC_DATEFORMAT, type)
+				.commit();
 	}
 
 	public synchronized boolean getMiscAutostart() {
