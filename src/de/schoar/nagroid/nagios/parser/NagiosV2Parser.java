@@ -229,6 +229,8 @@ public class NagiosV2Parser extends NagiosParser {
 	public static final int EnableChecks = 5;
 	public static final int DisableChecks = 6;
 	public static final int ScheduleImmediateCheck = 7;
+	public static final int ScheduleHostImmediateCheck = 96;
+	public static final int ScheduleHostServiceImmediateCheck = 17;
 	public static final int EnableAllServiceChecks = 15;
 	public static final int DisableAllServiceChecks = 16;
 	public static final int EnableNotifications = 22;
@@ -296,11 +298,11 @@ public class NagiosV2Parser extends NagiosParser {
 		
 	}
 	
-	public String ScheduleImmediateCheck(Object problemObj) throws NagiosParsingFailedException {
+	public String ScheduleImmediateCheck(Object problemObj, int type) throws NagiosParsingFailedException {
 		Date now = new Date();
 		// TODO: configurable data format!!!
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return SendCmd(problemObj, ScheduleImmediateCheck, "start_time=" + Uri.encode(sdf.format(now).toString()));
+		return SendCmd(problemObj, type, "start_time=" + Uri.encode(sdf.format(now).toString()));
 	}
 	
 	public String AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
