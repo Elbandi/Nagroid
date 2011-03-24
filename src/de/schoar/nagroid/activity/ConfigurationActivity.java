@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import de.schoar.android.helper.misc.DateFormat;
 import de.schoar.nagroid.ConfigurationAccess;
 import de.schoar.nagroid.DM;
 import de.schoar.nagroid.DefaultMenu;
@@ -392,6 +393,26 @@ public class ConfigurationActivity extends PreferenceActivity {
 						Boolean bool = (Boolean) obj;
 						DM.I.getConfiguration().setMiscAutostart(bool);
 						cbpMiscAutostart.setChecked(bool);
+						return false;
+					}
+				});
+		
+		final ListPreference lpMiscDateFormat = (ListPreference) findPreference(ConfigurationAccess.MISC_DATEFORMAT);
+
+		final DateFormat df = DateFormat.toEnum(DM.I.getConfiguration().getMiscDateFormat());
+		setListSummary(lpMiscDateFormat, df.toString());
+
+		lpMiscDateFormat
+				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+					@Override
+					public boolean onPreferenceChange(Preference pref,
+							Object obj) {
+
+						DateFormat type = DateFormat.valueOf(obj.toString()); 
+						setListSummary(lpMiscDateFormat, type.toString());
+
+						DM.I.getConfiguration().setMiscDateFormat(type.getValue(),
+								getApplicationContext());
 						return false;
 					}
 				});

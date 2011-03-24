@@ -1,12 +1,15 @@
 package de.schoar.nagroid.dialog;
 
+import android.R.drawable;
 import android.app.Dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +35,9 @@ public class ProblemDialog extends Dialog {
 	}
 
 	private void init(AdapterView<?> view, int position) {
+		final Dialog dlg = this;
+		final boolean isProblemAcknowledged, isChecksDisabled, isNotificationsDisabled, isInScheduledDowntime;
+		Drawable drawable;
 		setTitle("Status details");
 
 		final ListView lstSite = (ListView) view;
@@ -39,9 +45,10 @@ public class ProblemDialog extends Dialog {
 		
 		if (problem.getClass() == NagiosService.class) {
 			final NagiosService serviceProblem = (NagiosService) problem;
-			NagiosExtState serviceExtState = serviceProblem.getExtState();
+			final NagiosExtState serviceExtState = serviceProblem.getExtState();
 			
 			setContentView(R.layout.service);
+			getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 			
 			TextView tv = (TextView) findViewById(R.id.serviceTvHost);
 			tv.setText("Host: " + serviceProblem.getHost().getName());
@@ -50,89 +57,150 @@ public class ProblemDialog extends Dialog {
 			tv.setText("Service: " + serviceProblem.getName());
 			
 			tv = (TextView) findViewById(R.id.serviceTvInfo);
-			LinearLayout ll = (LinearLayout) findViewById(R.id.serviceLlProperties);
 			if (serviceExtState != null) {
-				ImageView iv;
 				tv.setText("Info: " + serviceExtState.getInfo());
 				tv.setVisibility(View.VISIBLE);
-				iv = (ImageView) findViewById(R.id.serviceIvChecksDisabled);
-				iv.setVisibility(serviceExtState.isChecksDisabled() ? View.VISIBLE : View.GONE);
-				iv = (ImageView) findViewById(R.id.serviceIvNotifications);
-				iv.setVisibility(serviceExtState.isNotificationsDisabled() ? View.VISIBLE : View.GONE);
-				iv = (ImageView) findViewById(R.id.serviceIvAcknowledged);
-				iv.setVisibility(serviceExtState.isProblemAcknowledged() ? View.VISIBLE : View.GONE);
-				iv = (ImageView) findViewById(R.id.serviceIvInScheduledDowntime);
-				iv.setVisibility(serviceExtState.isInScheduledDowntime() ? View.VISIBLE : View.GONE);
-				ll.setVisibility(serviceExtState.isChecksDisabled() || serviceExtState.isNotificationsDisabled() || serviceExtState.isProblemAcknowledged() || serviceExtState.isInScheduledDowntime() ? View.VISIBLE : View.GONE);
+				
+				isProblemAcknowledged = serviceExtState.isProblemAcknowledged();
+				isChecksDisabled = serviceExtState.isChecksDisabled();
+				isNotificationsDisabled = serviceExtState.isNotificationsDisabled();
+				isInScheduledDowntime = serviceExtState.isInScheduledDowntime();
 			} else {
 				tv.setVisibility(View.GONE);
-				ll.setVisibility(View.GONE);
+				isProblemAcknowledged = isChecksDisabled = isNotificationsDisabled = isInScheduledDowntime = false;
 			}
 			
-			
 			Button btn = (Button) findViewById(R.id.serviceBtnAckProblem);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isProblemAcknowledged ? R.drawable.noack2 : R.drawable.ack2);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					new AcknowledgeDialog(lstSite.getContext(), serviceProblem).show();
+					if (isProblemAcknowledged) {
+						RemoveAcknowledgeProblem(serviceProblem, NagiosV2Parser.RemoveAcknowledgeServiceProblem);
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						serviceExtState.setProblemAcknowledged(false);
+						dlg.cancel();
+					} else
+						new AcknowledgeDialog(lstSite.getContext(), serviceProblem, dlg).show();
 				}
 			});
-			btn = (Button) findViewById(R.id.serviceBtnDisableCheck);
+			btn = (Button) findViewById(R.id.serviceBtnChecks);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isChecksDisabled ? R.drawable.enabled : R.drawable.disabled);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ShowAlert(lstSite.getContext(), "Disable Check", "Really?", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							DisableCheck(serviceProblem, NagiosV2Parser.DisableChecks);
-							DM.I.getPollHandler().poll();
-						}
-					});
+					if (isChecksDisabled) {
+						ChangeServiceCheck(serviceProblem, NagiosV2Parser.EnableChecks, "Enable Check");
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						serviceExtState.setChecksDisabled(false);
+						dlg.cancel();
+					} else
+						ShowAlert(lstSite.getContext(), "Disable Check", "Really?", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								ChangeServiceCheck(serviceProblem, NagiosV2Parser.DisableChecks, "Disable Check");
+								/* nagios has delay, so we have to change this */
+								// DM.I.getPollHandler().poll();
+								if (serviceExtState != null)
+									serviceExtState.setChecksDisabled(true);
+								dlg.cancel();
+							}
+						});
 				}
 			});
-			btn = (Button) findViewById(R.id.serviceBtnDisableNotify);
+			btn = (Button) findViewById(R.id.serviceBtnNotifications);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isNotificationsDisabled ? R.drawable.enabled : R.drawable.disabled);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ShowAlert(lstSite.getContext(), "Disable Notify", "Really?", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							DisableNotify(serviceProblem, NagiosV2Parser.DisableNotifications);
-							DM.I.getPollHandler().poll();
-						}
-					});
+					if (isNotificationsDisabled) {
+						ChangeServiceNotify(serviceProblem, NagiosV2Parser.EnableNotifications, "Enable Notify");
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						serviceExtState.setNotificationsDisabled(false);
+						dlg.cancel();
+					} else
+						ShowAlert(lstSite.getContext(), "Disable Notify", "Really?", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								ChangeServiceNotify(serviceProblem, NagiosV2Parser.DisableNotifications, "Disable Notify");
+								/* nagios has delay, so we have to change this */
+								// DM.I.getPollHandler().poll();
+								if (serviceExtState != null)
+									serviceExtState.setNotificationsDisabled(true);
+								dlg.cancel();
+							}
+						});
 				}
 			});
 			btn = (Button) findViewById(R.id.serviceBtnSchedCheck);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ScheduleCheck(serviceProblem);
+					ScheduleCheck(serviceProblem, NagiosV2Parser.ScheduleImmediateCheck);
 					DM.I.getPollHandler().poll();
+					dlg.cancel();
 				}
 			});
-			btn = (Button) findViewById(R.id.serviceBtnSnooze);
+			btn = (Button) findViewById(R.id.serviceBtnScheduleDowntime);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime_blue : R.drawable.downtime_red);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					new SnoozeDialog(lstSite.getContext(), serviceProblem).show();
+					dlg.cancel();
 				}
 			});
 		} else if (problem.getClass() == NagiosHost.class) {
 			final NagiosHost hostProblem = (NagiosHost) problem;
+			final NagiosExtState hostExtState = hostProblem.getExtState();
+
 			setContentView(R.layout.host);
+			getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 			
 			TextView tv = (TextView) findViewById(R.id.hostTvHost);
 			tv.setText("Host: " + hostProblem.getName());
 			
 			tv = (TextView) findViewById(R.id.hostTvInfo);
-			tv.setText("Service Problems: " + hostProblem.getServices().size());
 
+			if (hostExtState != null) {
+				tv.setText("Info: " + hostExtState.getInfo());
+				
+				isProblemAcknowledged = hostExtState.isProblemAcknowledged();
+				isChecksDisabled = hostExtState.isChecksDisabled();
+				isNotificationsDisabled = hostExtState.isNotificationsDisabled();
+				isInScheduledDowntime = hostExtState.isInScheduledDowntime();
+			} else {
+				tv.setText("Service Problems: " + hostProblem.getServices().size());
+				isProblemAcknowledged = isChecksDisabled = isNotificationsDisabled = isInScheduledDowntime = false;
+			}
+			
+			
 			Button btn = (Button) findViewById(R.id.hostBtnAckProblem);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isProblemAcknowledged ? R.drawable.noack2 : R.drawable.ack2);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					new AcknowledgeDialog(lstSite.getContext(), hostProblem).show();
+					if (isProblemAcknowledged) {
+						RemoveAcknowledgeProblem(hostProblem, NagiosV2Parser.RemoveAcknowledgeHostProblem);
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						hostExtState.setProblemAcknowledged(false);
+						dlg.cancel();
+					} else
+						new AcknowledgeDialog(lstSite.getContext(), hostProblem, dlg).show();
 				}
 			});
 			btn = (Button) findViewById(R.id.hostBtnDisableServiceCheck);
@@ -140,6 +208,7 @@ public class ProblemDialog extends Dialog {
 				@Override
 				public void onClick(View view) {
 					ChangeServiceCheck(hostProblem, NagiosV2Parser.DisableAllServiceChecks, "Disable All Check");
+					dlg.cancel();
 				}
 			});
 			btn = (Button) findViewById(R.id.hostBtnEnableServiceCheck);
@@ -147,53 +216,109 @@ public class ProblemDialog extends Dialog {
 				@Override
 				public void onClick(View view) {
 					ChangeServiceCheck(hostProblem, NagiosV2Parser.EnableAllServiceChecks, "Enable All Check");
+					dlg.cancel();
 				}
 			});
 			btn = (Button) findViewById(R.id.hostBtnDisableServiceNotify);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					ChangeServiceNotify(hostProblem, NagiosV2Parser.DisableAllServiceChecks, "Disable All Notify");
+					ChangeServiceNotify(hostProblem, NagiosV2Parser.DisableAllServiceNotifications, "Disable All Notify");
+					dlg.cancel();
 				}
 			});
 			btn = (Button) findViewById(R.id.hostBtnEnableServiceNotify);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					ChangeServiceNotify(hostProblem, NagiosV2Parser.EnableAllServiceChecks, "Enable All Notify");
+					ChangeServiceNotify(hostProblem, NagiosV2Parser.EnableAllServiceNotifications, "Enable All Notify");
+					dlg.cancel();
 				}
 			});
-			btn = (Button) findViewById(R.id.hostBtnDisableCheck);
+			btn = (Button) findViewById(R.id.hostBtnChecks);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isChecksDisabled ? R.drawable.enabled : R.drawable.disabled);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ShowAlert(lstSite.getContext(), "Disable Check", "Really?", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							DisableCheck(hostProblem, NagiosV2Parser.DisableHostChecks);
-							DM.I.getPollHandler().poll();
-						}
-					});
+					if (isChecksDisabled) {
+						ChangeServiceCheck(hostProblem, NagiosV2Parser.EnableHostChecks, "Enable Check");
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						hostExtState.setChecksDisabled(false);
+						dlg.cancel();
+					} else
+						ShowAlert(lstSite.getContext(), "Disable Check", "Really?", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								ChangeServiceCheck(hostProblem, NagiosV2Parser.DisableHostChecks, "Disable Check");
+								/* nagios has delay, so we have to change this */
+								// DM.I.getPollHandler().poll();
+								if (hostExtState != null)
+									hostExtState.setChecksDisabled(true);
+								dlg.cancel();
+							}
+						});
 				}
 			});
-			btn = (Button) findViewById(R.id.hostBtnDisableNotify);
+			btn = (Button) findViewById(R.id.hostBtnNotifications);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isNotificationsDisabled ? R.drawable.enabled : R.drawable.disabled);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					ShowAlert(lstSite.getContext(), "Disable Notify", "Really?", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							DisableNotify(hostProblem, NagiosV2Parser.DisableHostNotifications);
-							DM.I.getPollHandler().poll();
-						}
-					});
+					if (isNotificationsDisabled) {
+						ChangeServiceNotify(hostProblem, NagiosV2Parser.EnableHostNotifications, "Enable Notify");
+						/* nagios has delay, so we have to change this */
+						// DM.I.getPollHandler().poll();
+						hostExtState.setNotificationsDisabled(false);
+						dlg.cancel();
+					} else
+						ShowAlert(lstSite.getContext(), "Disable Notify", "Really?", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								ChangeServiceNotify(hostProblem, NagiosV2Parser.DisableHostNotifications, "Disable Notify");
+								/* nagios has delay, so we have to change this */
+								// DM.I.getPollHandler().poll();
+								if (hostExtState != null)
+									hostExtState.setNotificationsDisabled(true);
+								dlg.cancel();
+							}
+						});
 				}
 			});
-			btn = (Button) findViewById(R.id.hostBtnSnooze);
+			
+			btn = (Button) findViewById(R.id.hostBtnSchedCheck);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ScheduleCheck(hostProblem, NagiosV2Parser.ScheduleHostImmediateCheck);
+					DM.I.getPollHandler().poll();
+					dlg.cancel();
+				}
+			});
+
+			btn = (Button) findViewById(R.id.hostBtnSchedServiceCheck);
+			btn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ScheduleCheck(hostProblem, NagiosV2Parser.ScheduleHostServiceImmediateCheck);
+					DM.I.getPollHandler().poll();
+					dlg.cancel();
+				}
+			});
+
+			btn = (Button) findViewById(R.id.hostBtnScheduleDowntime);
+			btn.setWidth(100);
+			drawable = lstSite.getContext().getResources().getDrawable(isInScheduledDowntime ? R.drawable.downtime_blue : R.drawable.downtime_red);
+			btn.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
 			btn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
 					new SnoozeDialog(lstSite.getContext(), hostProblem).show();
+					dlg.cancel();
 				}
 			});
 		}
@@ -220,7 +345,7 @@ public class ProblemDialog extends Dialog {
 		builder.show();
 	}
 	
-	private void DisableCheck(Object o, int type) {
+	private void RemoveAcknowledgeProblem(Object o, int type) {
 		// Not working :(
 		// ProgressDialog busyDialog = ProgressDialog.show(this.getContext(),
 		// "", "Sending Acknowledge...", true);
@@ -231,17 +356,17 @@ public class ProblemDialog extends Dialog {
 			String cmdRes = new NagiosV2Parser(site).SendCmd(o, type, null);
 			
 			// busyDialog.dismiss();
-			ShowResDialog("Disable Check", cmdRes);
+			ShowResDialog("Remove Acknowledge", cmdRes);
 		} catch (NagiosParsingFailedException e) {
 			// Log.d("NagiosAcknowledge", "Nagios Acknowledge failed!", e);
-			DM.I.getNagroidLog().addLogWithTime("DisableCheck: Failed: " + e.getMessage());
+			DM.I.getNagroidLog().addLogWithTime("RemoveAcknowledge: Failed: " + e.getMessage());
 			return;
 		}
 		
-		DM.I.getNagroidLog().addLogWithTime("DisableCheck: Ok");
+		DM.I.getNagroidLog().addLogWithTime("RemoveAcknowledge: Ok");
 	}
 	
-	private void DisableNotify(Object o, int type) {
+	private void ScheduleCheck(Object o, int type) {
 		// Not working :(
 		// ProgressDialog busyDialog = ProgressDialog.show(this.getContext(),
 		// "", "Sending Acknowledge...", true);
@@ -249,27 +374,7 @@ public class ProblemDialog extends Dialog {
 		ConfigurationAccess ca = DM.I.getConfiguration();
 		NagiosSite site = ca.getNagiosSite();
 		try {
-			String cmdRes = new NagiosV2Parser(site).SendCmd(o, type, null);
-			// busyDialog.dismiss();
-			ShowResDialog("Disable Notify", cmdRes);
-		} catch (NagiosParsingFailedException e) {
-			// Log.d("NagiosAcknowledge", "Nagios Acknowledge failed!", e);
-			DM.I.getNagroidLog().addLogWithTime("DisableNotify: Failed: " + e.getMessage());
-			return;
-		}
-		
-		DM.I.getNagroidLog().addLogWithTime("DisableNotify: Ok");
-	}
-	
-	private void ScheduleCheck(Object o) {
-		// Not working :(
-		// ProgressDialog busyDialog = ProgressDialog.show(this.getContext(),
-		// "", "Sending Acknowledge...", true);
-		
-		ConfigurationAccess ca = DM.I.getConfiguration();
-		NagiosSite site = ca.getNagiosSite();
-		try {
-			String cmdRes = new NagiosV2Parser(site).ScheduleImmediateCheck(o);
+			String cmdRes = new NagiosV2Parser(site).ScheduleImmediateCheck(o, type);
 			
 			// busyDialog.dismiss();
 			

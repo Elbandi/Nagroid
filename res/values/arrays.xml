@@ -27,5 +27,17 @@
 		<item>2700000</item>
 		<item>3600000</item>
 	</string-array>
+	<string-array name="config_date_format_entries">
+		<item>U.S. (MM-DD-YYYY HH:MM:SS)</item>
+		<item>European (DD-MM-YYYY HH:MM:SS)</item>
+		<item>ISO8601 (YYYY-MM-DD HH:MM:SS)</item>
+		<item>ISO8601 (YYYY-MM-DDTHH:MM:SS)</item>
+	</string-array>
+	<string-array name="config_date_format_values">
+		<item>DATE_FORMAT_US</item>
+		<item>DATE_FORMAT_EURO</item>
+		<item>DATE_FORMAT_ISO8601</item>
+		<item>DATE_FORMAT_STRICT_ISO8601</item>
+	</string-array>
 
 </resources>

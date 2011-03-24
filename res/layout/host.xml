@@ -6,15 +6,26 @@
     <TextView android:layout_width="fill_parent" android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/hostTvHost"></TextView>
     <TextView android:layout_width="fill_parent" android:layout_margin="5px" android:layout_height="wrap_content" android:id="@+id/hostTvInfo"></TextView>
     <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/hostScrollView">
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnAckProblem" android:text="Acknowledge Problem" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnSnooze" android:text="Snooze Problem" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnDisableCheck" android:text="Disable Host Checks" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnDisableNotify" android:text="Disable Host Notifications" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnEnableServiceCheck" android:text="Enable All Service Checks" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnDisableServiceCheck" android:text="Disable All Service Checks" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnEnableServiceNotify" android:text="Enable All Service Notifications" android:layout_height="wrap_content"></Button>
-            <Button android:layout_width="fill_parent" android:id="@+id/hostBtnDisableServiceNotify" android:text="Disable All Service Notifications" android:layout_height="wrap_content"></Button>
+        <LinearLayout android:layout_width="fill_parent" android:id="@+id/linearLayout4" android:layout_height="fill_parent" android:orientation="vertical">
+            <Button android:layout_width="wrap_content" android:layout_gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/restart2" android:layout_marginTop="10px" android:text="Schedule Immediate Check" android:width="240px" android:id="@+id/hostBtnSchedCheck"></Button>
+            <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:id="@+id/linearLayout1" android:layout_gravity="center" android:layout_height="wrap_content">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Acknowledge" android:width="120px" android:id="@+id/hostBtnAckProblem" android:drawableTop="@drawable/ack2"></Button>
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Checks" android:width="120px" android:id="@+id/hostBtnChecks" android:drawableTop="@drawable/enabled"></Button>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:id="@+id/linearLayout2" android:layout_gravity="center" android:layout_height="wrap_content">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:id="@+id/hostBtnNotifications" android:drawableTop="@drawable/disabled"></Button>
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Downtime" android:width="120px" android:id="@+id/hostBtnScheduleDowntime" android:drawableTop="@drawable/downtime_red"></Button>
+            </LinearLayout>
+            <TextView android:layout_width="fill_parent" android:layout_gravity="center" android:layout_height="wrap_content" android:gravity="center" android:text="All Services" android:id="@+id/textView1"></TextView>
+            <Button android:layout_width="wrap_content" android:layout_gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/restart2" android:layout_marginTop="10px" android:text="Schedule Immediate Check" android:width="240px" android:id="@+id/hostBtnSchedServiceCheck"></Button>
+            <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:id="@+id/linearLayout3" android:layout_gravity="center" android:layout_height="wrap_content">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Checks" android:width="120px" android:id="@+id/hostBtnEnableServiceCheck" android:drawableTop="@drawable/enabled"></Button>
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Checks" android:width="120px" android:id="@+id/hostBtnDisableServiceCheck" android:drawableTop="@drawable/disabled"></Button>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:orientation="horizontal" android:id="@+id/linearLayout3" android:layout_gravity="center" android:layout_height="wrap_content">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:id="@+id/hostBtnEnableServiceNotify" android:drawableTop="@drawable/enabled"></Button>
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="120px" android:text="Notifications" android:width="120px" android:id="@+id/hostBtnDisableServiceNotify" android:drawableTop="@drawable/disabled"></Button>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

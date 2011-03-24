@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.util.Log;
 import de.schoar.android.helper.http.HTTPDownloader;
 import de.schoar.android.helper.http.HTTPDownloaderException;
+import de.schoar.android.helper.misc.DateFormat;
 import de.schoar.nagroid.DM;
 import de.schoar.nagroid.nagios.NagiosExtState;
 import de.schoar.nagroid.nagios.NagiosHost;
@@ -84,7 +85,8 @@ public class NagiosV2Parser extends NagiosParser {
 	
 	private NagiosExtState getExtState(NagiosHost nagiosHost, String service) throws NagiosParsingFailedException {
 		
-		String url = mNagiosSite.getUrlBase() + "/statuswml.cgi?host=" + Uri.encode(nagiosHost.getName()) + "&service=" + Uri.encode(service);
+		String url = mNagiosSite.getUrlBase() + "/statuswml.cgi?host=" + Uri.encode(nagiosHost.getName());
+		if (service != null ) url += "&service=" + Uri.encode(service);
 		String user = mNagiosSite.getUrlUser();
 		String pass = mNagiosSite.getUrlPass();
 		
@@ -243,6 +245,11 @@ public class NagiosV2Parser extends NagiosParser {
 		}
 		if (service == null) {
 			nh.setState(decodeStateHost(state));
+			NagiosExtState extState = null;
+			if (DM.I.getConfiguration().getPollingExtState()) {
+				extState = new NagiosExtState(mInfo, mDuration, mLastCheck, mChecksDisabled, mNotificationsDisabled, mProblemAcknowledged, mInScheduledDowntime);
+			}
+			nh.setExtState(extState);
 		}
 
 		if (service != null) {
@@ -260,6 +267,8 @@ public class NagiosV2Parser extends NagiosParser {
 	public static final int EnableChecks = 5;
 	public static final int DisableChecks = 6;
 	public static final int ScheduleImmediateCheck = 7;
+	public static final int ScheduleHostImmediateCheck = 96;
+	public static final int ScheduleHostServiceImmediateCheck = 17;
 	public static final int EnableAllServiceChecks = 15;
 	public static final int DisableAllServiceChecks = 16;
 	public static final int EnableNotifications = 22;
@@ -272,6 +281,8 @@ public class NagiosV2Parser extends NagiosParser {
 	public static final int AcknowledgeServiceProblem = 34;
 	public static final int EnableHostChecks = 47;
 	public static final int DisableHostChecks = 48;
+	public static final int RemoveAcknowledgeHostProblem = 51;
+	public static final int RemoveAcknowledgeServiceProblem = 52;
 	public static final int ScheduleHostDowntime = 55;
 	public static final int ScheduleDowntime = 56;
 	
@@ -325,11 +336,10 @@ public class NagiosV2Parser extends NagiosParser {
 		
 	}
 	
-	public String ScheduleImmediateCheck(Object problemObj) throws NagiosParsingFailedException {
+	public String ScheduleImmediateCheck(Object problemObj, int type) throws NagiosParsingFailedException {
 		Date now = new Date();
-		// TODO: configurable data format!!!
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return SendCmd(problemObj, ScheduleImmediateCheck, "start_time=" + Uri.encode(sdf.format(now).toString()));
+		SimpleDateFormat sdf = new SimpleDateFormat(DateFormat.toDateFormat(DM.I.getConfiguration().getMiscDateFormat()));
+		return SendCmd(problemObj, type, "start_time=" + Uri.encode(sdf.format(now).toString()));
 	}
 	
 	public String AcknowledgeProblem(Object problemObj, String comment) throws NagiosParsingFailedException {
@@ -364,7 +374,7 @@ public class NagiosV2Parser extends NagiosParser {
 		CustomData += "&com_data=" + Uri.encode(comment);
 		
 		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(DateFormat.toDateFormat(DM.I.getConfiguration().getMiscDateFormat()));
 		
 		CustomData += "&start_time=" + Uri.encode(sdf.format(now).toString());
 		CustomData += "&end_time=" + Uri.encode(snoozeTime);
